@@ -28,7 +28,13 @@
     .subtitle{color:var(--muted);font-size:14px}
 
     .hero{position:relative;background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0)), var(--card);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
-    .cover{width:100%;height:220px;background:#222 center/cover no-repeat}
+    .cover{position:relative;width:100%;height:240px;background:#222 center/cover no-repeat;overflow:hidden}
+    .cover::after{content:"";position:absolute;inset:0;background:
+      radial-gradient(60% 80% at 10% 10%, rgba(255,95,162,.22), transparent 60%),
+      radial-gradient(60% 80% at 90% 90%, rgba(110,231,255,.18), transparent 60%);
+      mix-blend-mode:screen;animation:glow 16s linear infinite;opacity:.7}
+    .cover canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+    @keyframes glow{0%{transform:scale(1) translate(0,0)}50%{transform:scale(1.05) translate(0,-6px)}100%{transform:scale(1) translate(0,0)}}
     .profile{display:grid;grid-template-columns:140px 1fr;gap:16px;padding:16px}
     .avatar{width:140px;height:140px;border-radius:20px;object-fit:cover;border:2px solid rgba(255,255,255,.16);box-shadow:var(--shadow)}
     .tag{color:var(--muted);font-size:14px}
@@ -64,7 +70,7 @@
     </header>
 
     <article class="hero" aria-label="Tarjeta personalizada">
-      <div id="cover" class="cover" role="img" aria-label="Imagen de portada"></div>
+      <div id="cover" class="cover" role="img" aria-label="Imagen de portada"><canvas id="coverFx"></canvas></div>
       <div class="profile">
         <img id="avatar" class="avatar" src="" alt="Foto de Nathalia" />
         <div>
@@ -94,12 +100,7 @@
       <div id="favoritos" class="list"></div>
     </section>
 
-    <section class="section" id="galeria-sec">
-      <h3>Galería</h3>
-      <div id="galeria" class="gallery"></div>
-    </section>
-
-    <section class="section" id="spotify-sec">
+        <section class="section" id="spotify-sec">
       <h3>Canción para ti 🎶</h3>
       <iframe id="spotify" class="spotify" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
     </section>
@@ -115,7 +116,7 @@
       nombre: 'Nathalia',
       apodo: 'Natha',
       portada: '',
-      avatar:  'nathalia-avatar.PNG',
+      avatar:  './nathalia-avatar.PNG',
       carta: `Nathalia, desde que llegaste a mi vida, he aprendido muchas cosas, a tu lado mi perspectiva cambia, contigo puedo ser yo mismo sin tener miedo a que me juzguen o me menosprecien, amo que tengamos gustos y pensamientos muy similares, nunca había conectado en aspecto con alguien tan bien, tengo en claro que no te conozco mucho, pero lo poco que me haz dejado conocer me gusta mucho, eres única e inigualable, admiro tu manera tan bonita de pensar en el amor, y me da coraje cuando me hablas de estúpidos que no te valora, le agradezco a la vida por toparme contigo en el momento menos oportuno, pero el mas indicado, simplemente gracias por estar a mi lado, no se que nos depara el destino, pero tengo muy en claro que quiero mantenerte en mi vida hasta que se me acabe, y como dice morat \"Cuando las cosas tienen que pasar, simplemente pasan\". Feliz dia De Amor y Amistad <3`,
       recuerdos: [
         'cuando me regalaste el llavero',
@@ -152,6 +153,7 @@
       document.getElementById('avatar').src = AMIGA.avatar;
       const cover = document.getElementById('cover');
       cover.style.backgroundImage = `url('${AMIGA.portada}')`;
+      initCoverFx();
 
       const rec = document.getElementById('recuerdos');
       rec.innerHTML = AMIGA.recuerdos.map(r=>`<div class='pill'>${r}</div>`).join('');
@@ -188,6 +190,93 @@
           boom(80);
         }
       }, speed);
+    }
+
+    // ======= Portada animada (corazones + destellos) =======
+    function initCoverFx(){
+      const cover = document.getElementById('cover');
+      const cvs = document.getElementById('coverFx');
+      if(!cover || !cvs) return;
+      const ctx = cvs.getContext('2d');
+      const styles = getComputedStyle(document.documentElement);
+      const C1 = (styles.getPropertyValue('--accent')||'#ff5fa2').trim();
+      const C2 = (styles.getPropertyValue('--accent-2')||'#6ee7ff').trim();
+      let dpr = Math.max(1, window.devicePixelRatio || 1);
+      let W=0,H=0, hearts=[], stars=[], t=0;
+
+      function resize(){
+        const r = cover.getBoundingClientRect();
+        W = Math.max(1, Math.floor(r.width));
+        H = Math.max(1, Math.floor(r.height));
+        cvs.width = Math.floor(W * dpr);
+        cvs.height = Math.floor(H * dpr);
+        cvs.style.width = W+'px';
+        cvs.style.height = H+'px';
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+        build();
+      }
+
+      function build(){
+        const nHearts = Math.max(18, Math.floor(W/40));
+        const nStars  = Math.max(24, Math.floor(W/30));
+        hearts = [...Array(nHearts)].map(()=>({
+          x: Math.random()*W,
+          y: Math.random()*H,
+          r: 6 + Math.random()*14,
+          vy: 0.25 + Math.random()*0.5,
+          vr: (Math.random()-.5)*0.02,
+          rot: Math.random()*Math.PI,
+          off: Math.random()*Math.PI*2,
+          c: Math.random()<.5?C1:C2,
+          a: .35 + Math.random()*.35
+        }));
+        stars = [...Array(nStars)].map(()=>({
+          x: Math.random()*W,
+          y: Math.random()*H,
+          r: 1 + Math.random()*2.2,
+          a: .3 + Math.random()*.5,
+          tw: .01 + Math.random()*.03
+        }));
+      }
+
+      function heartPath(x,y,s,rot){
+        ctx.save(); ctx.translate(x,y); ctx.rotate(rot); ctx.scale(s,s);
+        ctx.beginPath();
+        ctx.moveTo(0,-0.35);
+        ctx.bezierCurveTo(0,-0.85,-0.7,-0.85,-0.7,-0.15);
+        ctx.bezierCurveTo(-0.7,0.45,0,0.9,0,1.0);
+        ctx.bezierCurveTo(0,0.9,0.7,0.45,0.7,-0.15);
+        ctx.bezierCurveTo(0.7,-0.85,0,-0.85,0,-0.35);
+        ctx.closePath();
+        ctx.restore();
+      }
+
+      function draw(){
+        ctx.clearRect(0,0,W,H);
+        // estrellas
+        for(const s of stars){
+          ctx.globalAlpha = Math.max(0, Math.min(1, s.a + Math.sin(t*s.tw)*.25));
+          ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fillStyle='#ffffff'; ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        // corazones flotando
+        for(const h of hearts){
+          h.y -= h.vy; h.rot += h.vr; const dx = Math.sin((t*0.02)+h.off)*0.6; h.x += dx;
+          if(h.y < -20){ h.y = H + 20*Math.random(); h.x = Math.random()*W; }
+          if(h.x < -20) h.x = W+20; if(h.x>W+20) h.x=-20;
+          ctx.save();
+          ctx.shadowColor = h.c; ctx.shadowBlur = 14;
+          ctx.globalAlpha = h.a; ctx.fillStyle = h.c;
+          heartPath(h.x,h.y,h.r, h.rot);
+          ctx.fill(); ctx.restore();
+        }
+        t++;
+        requestAnimationFrame(draw);
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+      draw();
     }
 
     // Confeti mini
