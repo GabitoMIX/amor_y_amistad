@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- PÁGINA INDIVIDUAL — Duplica este archivo para otras personas -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Para Nathalia — Amor y Amistad 💖</title>
+  <meta name="description" content="Un mensajito solo para ti, con recuerdos, cosas favoritas y música." />
+  <meta property="og:title" content="Para Nathalia — Amor y Amistad 💖" />
+  <meta property="og:description" content="Un mensajito solo para ti, con recuerdos, cosas favoritas y música." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEA" />
+  <meta name="theme-color" content="#ff5fa2" />
+  <style>
+    :root{
+      --bg: #0f0f14; --card: #151522; --ink: #f7f7fb; --muted:#b9b9c9;
+      --accent:#ff5fa2; --accent-2:#6ee7ff; --radius:22px; --shadow:0 12px 34px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans","Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";background:radial-gradient(1200px 800px at 100% 0%, rgba(255,95,162,.06), transparent 40%), radial-gradient(900px 700px at 0% 100%, rgba(110,231,255,.06), transparent 40%), var(--bg);color:var(--ink)}
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:900px;margin:0 auto;padding:26px}
+    header{display:flex;align-items:center;gap:14px;justify-content:space-between;margin:6px 0 20px}
+    .logo{display:flex;gap:12px;align-items:center}
+    .heart{font-size:28px;filter:drop-shadow(0 2px 6px rgba(255,95,162,.45))}
+    .title h1{margin:0;font-size:clamp(22px,3.2vw,34px)}
+    .subtitle{color:var(--muted);font-size:14px}
+
+    .hero{position:relative;background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0)), var(--card);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+    .cover{width:100%;height:220px;background:#222 center/cover no-repeat}
+    .profile{display:grid;grid-template-columns:140px 1fr;gap:16px;padding:16px}
+    .avatar{width:140px;height:140px;border-radius:20px;object-fit:cover;border:2px solid rgba(255,255,255,.16);box-shadow:var(--shadow)}
+    .tag{color:var(--muted);font-size:14px}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+    .btn{cursor:pointer;border:0;padding:10px 14px;border-radius:12px;font-weight:700;background:linear-gradient(90deg,var(--accent),#ff8ac7);color:#140c12;box-shadow:0 6px 20px rgba(255,95,162,.35)}
+    .ghost{background:transparent;color:var(--ink);border:1px solid rgba(255,255,255,.18)}
+
+    .section{margin:22px 0;background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));border:1px solid rgba(255,255,255,.06);padding:16px;border-radius:16px}
+    .section h3{margin:0 0 10px}
+    .list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+    .pill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);padding:10px 12px;border-radius:12px}
+    .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+    .gallery img{width:100%;height:180px;object-fit:cover;border-radius:14px;border:1px solid rgba(255,255,255,.10)}
+    iframe.spotify{width:100%;height:180px;border:0;border-radius:14px}
+
+    footer{margin:40px 0 24px;color:var(--muted);text-align:center;font-size:13px}
+
+    @media (max-width:720px){ .profile{grid-template-columns:1fr;} .avatar{justify-self:center} }
+    @media print{ body{background:white;color:black} .btn,.actions{display:none!important} .hero,.section{border-color:#ddd} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">
+        <span class="heart">💖</span>
+        <div class="title">
+          <h1 id="pageTitle">Para Nathalia</h1>
+          <div class="subtitle" id="date-sub">Colombia • Tercer sábado de septiembre</div>
+        </div>
+      </div>
+      <button class="btn ghost" onclick="window.print()">Imprimir 🖨️</button>
+    </header>
+
+    <article class="hero" aria-label="Tarjeta personalizada">
+      <div id="cover" class="cover" role="img" aria-label="Imagen de portada"></div>
+      <div class="profile">
+        <img id="avatar" class="avatar" src="" alt="Foto de Nathalia" />
+        <div>
+          <h2 id="nombre">Nathalia</h2>
+          <div class="tag" id="apodo">Natha • Amor y Amistad</div>
+          <div class="actions">
+            <button class="btn" id="revealBtn" onclick="revealMessage()">Tengo algo que decirte</button>
+            <button class="btn" onclick="boom()">Confeti 🎉</button>
+            <button class="btn ghost" onclick="copyLink()">Copiar enlace 🔗</button>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <section class="section">
+      <h3>Un mensajito para ti 💌</h3>
+      <p id="carta" style="line-height:1.7; white-space:pre-wrap" hidden></p>
+    </section>
+
+    <section class="section" id="recuerdos-sec">
+      <h3>Recuerdos juntos</h3>
+      <div id="recuerdos" class="list"></div>
+    </section>
+
+    <section class="section" id="favoritos-sec">
+      <h3>Momentos favoritos</h3>
+      <div id="favoritos" class="list"></div>
+    </section>
+
+    <section class="section" id="galeria-sec">
+      <h3>Galería</h3>
+      <div id="galeria" class="gallery"></div>
+    </section>
+
+    <section class="section" id="spotify-sec">
+      <h3>Canción para ti 🎶</h3>
+      <iframe id="spotify" class="spotify" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    </section>
+
+    <footer>Hecho con cariño 💌</footer>
+  </div>
+
+  <canvas id="confetti" style="position:fixed;inset:0;pointer-events:none"></canvas>
+
+  <script>
+    // ======= DATOS DE NATHALIA =======
+    const AMIGA = {
+      nombre: 'Nathalia',
+      apodo: 'Natha',
+      portada: '',
+      avatar:  './nathalia-avatar.PNG',
+      carta: `Nathalia, desde que llegaste a mi vida, he aprendido muchas cosas, a tu lado mi perspectiva cambia, contigo puedo ser yo mismo sin tener miedo a que me juzguen o me menosprecien, amo que tengamos gustos y pensamientos muy similares, nunca había conectado en aspecto con alguien tan bien, tengo en claro que no te conozco mucho, pero lo poco que me haz dejado conocer me gusta mucho, eres única e inigualable, admiro tu manera tan bonita de pensar en el amor, y me da coraje cuando me hablas de estúpidos que no te valora, le agradezco a la vida por toparme contigo en el momento menos oportuno, pero el mas indicado, simplemente gracias por estar a mi lado, no se que nos depara el destino, pero tengo muy en claro que quiero mantenerte en mi vida hasta que se me acabe, y como dice morat \"Cuando las cosas tienen que pasar, simplemente pasan\". Feliz dia De Amor y Amistad <3`,
+      recuerdos: [
+        'cuando me regalaste el llavero',
+        'El dia que me negaste el abrazo (nunca lo voy a olvida :() ',
+        'El dia que fuimos juntos a ver anime <3'
+      ],
+      favoritos: [
+        'cuando salimos a ver el partido del cucuta femenino',
+        'Cuando salimos a comer en El Catire HotDogs y habian un poco de venezolanos jajaja',
+        'Cuando fuimos a chinacota a celebrar tu cumple <3'
+      ],
+      youtube: 'https://www.youtube.com/embed/FsLHwqlFajQ'
+    };
+
+    // Fecha concreta (tercer sábado de septiembre del año actual)
+    (function setHolidayDate(){
+      const now = new Date();
+      const y = now.getFullYear();
+      const sept1 = new Date(y, 8, 1);
+      const firstSat = (6 - sept1.getDay() + 7) % 7; // distancia al primer sábado
+      const thirdSat = 1 + firstSat + 14; // día del mes
+      const d = new Date(y, 8, thirdSat);
+      document.getElementById('date-sub').textContent = `Colombia • ${d.toLocaleDateString('es-CO',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}`;
+    })();
+
+    // Pintar datos
+    (function render(){
+      document.title = `Para ${AMIGA.nombre} — Amor y Amistad 💖`;
+      document.querySelector('meta[property="og:title"]').setAttribute('content', document.title);
+      document.getElementById('pageTitle').textContent = `Para ${AMIGA.nombre}`;
+      document.getElementById('nombre').textContent = AMIGA.nombre;
+      document.getElementById('apodo').textContent = AMIGA.apodo ? `${AMIGA.apodo} • Amor y Amistad` : '';
+      // (se revela al presionar el botón)
+      document.getElementById('avatar').src = AMIGA.avatar;
+      const cover = document.getElementById('cover');
+      cover.style.backgroundImage = `url('${AMIGA.portada}')`;
+
+      const rec = document.getElementById('recuerdos');
+      rec.innerHTML = AMIGA.recuerdos.map(r=>`<div class='pill'>${r}</div>`).join('');
+      const fav = document.getElementById('favoritos');
+      fav.innerHTML = AMIGA.favoritos.map(f=>`<div class='pill'>${f}</div>`).join('');
+      document.getElementById('spotify').src = AMIGA.youtube;
+    })();
+
+    function copyLink(){
+      navigator.clipboard.writeText(location.href).then(()=>{
+        const b = document.createElement('div');
+        b.textContent = '¡Enlace copiado!';
+        Object.assign(b.style,{position:'fixed',bottom:'20px',left:'50%',transform:'translateX(-50%)',background:'rgba(20,20,30,.95)',color:'white',padding:'10px 14px',borderRadius:'12px',border:'1px solid rgba(255,255,255,.15)',zIndex:99});
+        document.body.appendChild(b); setTimeout(()=>b.remove(),1400);
+      });
+    }
+
+    function revealMessage(){
+      const btn = document.getElementById('revealBtn');
+      const el = document.getElementById('carta');
+      if(!btn || !el) return;
+      btn.disabled = true;
+      btn.textContent = 'Leyendo…';
+      el.hidden = false;
+      const text = AMIGA.carta;
+      el.textContent = '';
+      let i = 0;
+      const speed = 18; // ms por carácter
+      const timer = setInterval(()=>{
+        el.textContent += text[i++] || '';
+        if(i >= text.length){
+          clearInterval(timer);
+          btn.textContent = '💖';
+          boom(80);
+        }
+      }, speed);
+    }
+
+    // Confeti mini
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    let W,H; function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight;} resize(); addEventListener('resize',resize);
+    let pieces=[];
+    function boom(n=90){for(let i=0;i<n;i++) pieces.push({x:Math.random()*W,y:-10,r:6+Math.random()*8,vx:(Math.random()-.5)*3,vy:2+Math.random()*3,rot:Math.random()*Math.PI,vr:(Math.random()-.5)*.2,c:Math.random()<.5?'#ff5fa2':'#6ee7ff'});} 
+    (function loop(){requestAnimationFrame(loop); ctx.clearRect(0,0,W,H); for(const p of pieces){ p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr; p.vy+=0.03; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*.6); ctx.restore(); } pieces=pieces.filter(p=>p.y<H+20);})();
+  </script>
+</body>
+</html>
